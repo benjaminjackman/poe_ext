@@ -332,7 +332,6 @@ function processItems(items){
 			try {
 
 				if (items.length){
-
 					// render rare list
 					$('#rareList').append( formatRareList(getSortedItems(items)) ).find('table').stupidtable();
 
@@ -349,7 +348,6 @@ function processItems(items){
 							$(this).parent().addClass('active');
 						})
 					;
-
 				}
 
 				deferred.resolve();
@@ -694,7 +692,7 @@ function formatRareList(sortedRares, bSetupDropdown) {
 
 	var oRarity = {};
 
-	var oTable = $('<table class="table table-condensed table-striped">');
+	var oTable = $('<table class="table table-condensed table-striped table-bordered">');
 
 	var oHead = $('<thead>');
 

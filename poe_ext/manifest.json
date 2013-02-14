@@ -7,7 +7,7 @@
 
   "app": {
     "launch": {
-      "local_path": "main.html",
+      "local_path": "main2.html",
       "container": "tab"
     }
   },
@@ -19,7 +19,7 @@
 
   "update_url": "https://raw.github.com/njs50/poe_ext/master/poe_updates.xml",
 
-  "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
+  "content_security_policy": "script-src 'self' https://ssl.google-analytics.com 'unsafe-eval'; object-src 'self'",
 
   "permissions": ["http://www.pathofexile.com/*","http://webcdn.pathofexile.com/*", "clipboardWrite", "clipboardRead", "unlimitedStorage"]
 }

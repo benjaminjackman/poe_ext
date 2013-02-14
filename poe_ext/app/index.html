@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" ng-app="myApp">
+<head>
+  <meta charset="utf-8">
+  <title>My AngularJS App</title>
+  <link rel="stylesheet" href="css/app.css"/>
+  <link rel="stylesheet" href="lib/bootstrap/bootstrap.css"/>
+  <link rel="stylesheet" href="lib/jquery-ui/css/smoothness/jquery-ui-1.10.0.custom.min.css"/>
+</head>
+<body>
+  <ul class="menu">
+    <li><a href="#/inventory-search">Inventory Search</a></li>
+    <li><a href="#/view2">view2</a></li>
+  </ul>
+
+  <div id="main-view" ng-view></div>
+  <br/>
+
+  <div ng-controller="ImdbController">
+    <div jq-slider></div>
+    <input id="amount" /> {{years}}
+  </div>
+
+  <div>Angular seed app: v<span app-version></span></div>
+
+  <!-- In production use:
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular.min.js"></script>
+  -->
+  <script src="lib/jquery/jquery.min.js"></script>
+  <script src="lib/jquery-ui/js/jquery-ui-1.10.0.custom.min.js"></script>
+  <script src="lib/angular/angular.js"></script>
+  <script src="lib/angular/angular-ui.js"></script>
+  <script src="js/coffee-out/app.js"></script>
+  <script src="js/services.js"></script>
+  <script src="js/coffee-out/controllers.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="js/coffee-out/directives.js"></script>
+</body>
+</html>
