@@ -15,6 +15,7 @@
     return InventorySearchCtrl;
   })());
   module.controller("ImdbController", function($scope) {
-    return $scope.years = "1950";
+    $scope.min = "100";
+    return $scope.max = "200";
   });
 }).call(this);
