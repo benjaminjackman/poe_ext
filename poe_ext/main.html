@@ -18,11 +18,18 @@
 		<!-- bootstrap css -->
 		<link href="/assets/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
 
+		<!-- tablesorter css -->
+		<link href="/assets/css/tablesorter.bootstrap.css" rel="stylesheet">
+
 
 		<script src="/assets/js/date.js"></script>
 		<script src="/assets/js/json2.js"></script>
 		<script src="/assets/js/jquery-1.7.2.js"></script>
-		<script src="/assets/js/jquery.stupidtable.js"></script>
+
+		<script src="/assets/js/jquery.tablesorter.js"></script>
+		<script src="/assets/js/jquery.tablesorter.widgets.js"></script>
+		<script src="/assets/js/jquery.scrollTo.js"></script>
+
 		<script src="/assets/js/jquery.blockUI.js"></script>
 		<script src="/assets/js/jquery.tableExport.js"></script>
 		<script src="/assets/js/track.js"></script>
@@ -103,7 +110,7 @@
 						<li><a id="openItemSelection" data-toggle="modal" href="#inventoryItems">Configure Items</a></li>
 						<li class="divider"></li>
 						<li><a id="copyItemCSV">Copy as CSV</a></li>
-						<li><a id="saveAllItems" download="poe_ext.poe">Export to File</a></li>
+						<li><a id="saveAllItems">Export to File</a></li>
 				    </ul>
 				  </li>
 
@@ -243,6 +250,31 @@
 										Select All / None
 									</label>
 									<ul id="viewRarity" class="unstyled"></ul>
+									<div class="clearfix"></div>
+								</div>
+						    </div>
+
+						</div>
+
+
+						<div class="accordion-group">
+
+				  			<div class="accordion-heading">
+				  				<a class="accordion-toggle" data-toggle="collapse" href="#collapseLevels">
+				  					Level Range
+				  				</a>
+				  			</div>
+
+							<div id="collapseLevels" class="accordion-body collapse">
+								<div class="accordion-inner">
+									<form class="form-inline">
+										<label for="inventoryMinLevel">
+											Level Range
+										</label>
+										<input type="text" class="input-mini" id="inventoryMinLevel" value="0">
+										to
+										<input type="text" class="input-mini" id="inventoryMaxLevel" value="100">
+									</form>
 									<div class="clearfix"></div>
 								</div>
 						    </div>

@@ -1,6 +1,20 @@
 var aInventory = [];
 var craftItems = [];
 
+$.tablesorter.defaults.theme = 'bootstrap';
+$.tablesorter.defaults.headerTemplate = '{content} {icon}';
+
+$.tablesorter.defaults.widgets = ['uitheme','stickyHeaders'];
+$.tablesorter.defaults.widgetOptions = {uitheme: 'bootstrap', stickyHeaders : 'tablesorter-stickyHeader'};
+
+$.tablesorter.defaults.sortInitialOrder = 'desc';
+$.tablesorter.defaults.sortInitialOrder = 'desc';
+
+// after a resort on a table scroll to the top (as sticky header maybe hiding content)
+$(document).on('sortEnd','table',function(e,t){
+	$.scrollTo(t, {offset: {top: -60}});
+})
+
 $('#resetCols').click(function(){
 	$('#inventoryCols input[type=checkbox]:checked').prop('checked',false);
 	return false;
@@ -10,6 +24,29 @@ $('#showAllCols').click(function(){
 	return false;
 });
 
+// enable shift click for checkboxes
+
+//craftingIgnoreTabs,craftingIgnoreChars,refreshTabs,refreshChars
+var cbLastID = '';
+var cbLastName = '';
+
+$(document).on("click","li input[type=checkbox]",function(evt){
+
+	var oThis = $(evt.target);
+
+	var thisName = oThis.attr('name');
+	var thisID = oThis.attr('id');
+
+	if (thisName === cbLastName && $.trim(thisName !== '') && evt.shiftKey ) {
+		var aCB = $('input[name="' + thisName + '"]');
+		var oFirst = $('#' + cbLastID);
+		aCB.slice($.inArray(oFirst[0],aCB), $.inArray($('#' + thisID)[0],aCB)+1).prop('checked',oFirst.prop('checked'));
+	}
+
+	cbLastID = thisID;
+	cbLastName = thisName;
+
+});
 
 function setupInventoryRendering(items) {
 
@@ -67,7 +104,7 @@ function setupInventoryRendering(items) {
 	for (key in oTypes) {
 		if (oTypes.hasOwnProperty(key)) {
 			var cbox = '<input type="checkbox" class="checkboxBoss" checked data-target="#view' + key + '"/>';
-			var expandLink = '<a class="btn-small" href="#" data-toggle="collapse" data-target="#view' + key + '"><i class="icon-chevron-down"></i></a>';
+			var expandLink = '<a class="btn-small" href="#" data-toggle="collapse" data-target="#view' + key + '"><i class="icon-white icon-chevron-down"></i></a>';
 			var list = $('<li><label class="checkbox">'+ cbox + key +'' + expandLink + '</label></li>')
 				.appendTo(oTypeUL);
 			var inner =  $('<ul id="view'+key+'" class="collapse" style="list-style: none;"/>').appendTo(list);
@@ -149,7 +186,7 @@ $('#applyColSelection').click(function(){
 	aVisibleCols = aSelected;
 	setCache('inventoryCols',aSelected);
 
-	$('#rareList').empty().append( formatRareList(getSortedItems(aInventory),false) ).find('table').stupidtable();
+	$('#rareList').empty().append( formatRareList(getSortedItems(aInventory),false) ).find('table').tablesorter();
 
 	$('#openRareList').trigger('click');
 
@@ -157,7 +194,7 @@ $('#applyColSelection').click(function(){
 
 $('#applyItemSelection').click(function(){
 
-	$('#rareList').empty().append( formatRareList(getSortedItems(aInventory),false) ).find('table').stupidtable();
+	$('#rareList').empty().append( formatRareList(getSortedItems(aInventory),false) ).find('table').tablesorter();
 	$('#openRareList').trigger('click');
 
 })
@@ -333,7 +370,7 @@ function processItems(items){
 
 				if (items.length){
 					// render rare list
-					$('#rareList').append( formatRareList(getSortedItems(items)) ).find('table').stupidtable();
+					$('#rareList').append( formatRareList(getSortedItems(items)) ).find('table').tablesorter();
 
 					$('#openRareList')
 						.click(function(){
@@ -485,9 +522,25 @@ function getItemLink(item) {
 
 			.popover({
 				//title: item.name,
+				html: true,
+				trigger: 'hover',
 				content: function(){
 
-					var html = $('<div>').append('<img src="' + item.rawItem.icon + '" class="pull-left"/>');
+					var html = $('<div class="fit-content" style="width:500px">')
+
+
+          var left = $('<div class="pull-left"  style="width:100px">')
+              left.append('<img src="' + item.rawItem.icon + '" />');
+
+          var tableContainer = $('<div style="position: absolute; bottom: 25px">');
+          var table = getLocationTable(item, "Inventory");
+          if(table) table.css('display','table'); // I don't like having to set this again
+                                        // but it's better than making the executive decision
+                                        // to refactor how the tables work in the main table
+          tableContainer.append(table);
+
+          left.append(tableContainer);
+          html.append(left);
 
 					if (item.sockets.numSockets > 0) {
 						html.append(displaySockets(item));
@@ -495,15 +548,14 @@ function getItemLink(item) {
 
 					$('<pre class="pull-left">')
 						.append(itemToString(item))
-						.appendTo(html)
-					;
-
+						.appendTo(html);
 
 					$('<div class="clearfix">').appendTo(html);
+
 					return html;
 				},
 				placement: 'bottom',
-				template: '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p></p></div></div></div>',
+				template: '<div class="popover fit-content"><div class="arrow"></div><div class="popover-inner"><div class="popover-content fit-content"><p></p></div></div></div>',
 				delay: { show: 500, hide: 100 }
 			})
 			.click(function(){
@@ -794,6 +846,13 @@ function getSortedItems(items) {
 	var oRarity = {};
 	var oType = {};
 
+	var min = parseInt($('#inventoryMinLevel').val(),10);
+	var max = parseInt($('#inventoryMaxLevel').val(),10);
+
+	if (isNaN(min)) min = 0;
+	if (isNaN(max)) max = 100;
+
+
 	$('input[name=viewRarity]:checked').each(function(idx,item){
 		oRarity[$(item).val()] = true;
 	});
@@ -804,7 +863,9 @@ function getSortedItems(items) {
 
 	for (var i = 0; i < items.length; i++) {
 		var oThis = items[i];
-		if (oRarity[oThis.rarity] === true && oType[oThis.itemRealType] === true ) sortedRares.push(oThis);
+		var thisLevel = oThis.requirements.hasOwnProperty('Level') ? parseInt(oThis.requirements.Level,10) : 0;
+
+		if (thisLevel <= max && thisLevel >= min && oRarity[oThis.rarity] === true && oType[oThis.itemRealType] === true ) sortedRares.push(oThis);
 	}
 
 	// sort on rare name
